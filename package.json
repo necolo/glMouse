@@ -1,0 +1,11 @@
+{
+  "name": "gl-mouse",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Necolo/glMouse.git",
+  "author": "Necolo Lv.C",
+  "license": "MIT",
+  "dependencies": {
+    "gl-matrix": "^2.6.1"
+  }
+}
