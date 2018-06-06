@@ -12,6 +12,7 @@ export type MouseT = {
     preset:(spec:{
         camera:Vector3,
     }) => void;
+    eye:vec3;
 }
 
 export function glMouse (canvas:HTMLCanvasElement) : MouseT {
@@ -54,11 +55,11 @@ export function glMouse (canvas:HTMLCanvasElement) : MouseT {
     }
 
     res.tick = () => {
-        const camera = getCircleCoor(lat, lon, radius);
+        res.eye = getCircleCoor(lat, lon, radius);
 
         const view = mat4.lookAt(
             mat4.create(),
-            camera, 
+            res.eye, 
             [0, 0, 0],
             [0, 1, 0],
         );
