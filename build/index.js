@@ -33,8 +33,8 @@ function glMouse(canvas) {
         }
     };
     res.tick = function () {
-        var camera = getCircleCoor(lat, lon, radius);
-        var view = gl_matrix_1.mat4.lookAt(gl_matrix_1.mat4.create(), camera, [0, 0, 0], [0, 1, 0]);
+        res.eye = getCircleCoor(lat, lon, radius);
+        var view = gl_matrix_1.mat4.lookAt(gl_matrix_1.mat4.create(), res.eye, [0, 0, 0], [0, 1, 0]);
         res.view = function () { return view; };
     };
     canvas.addEventListener('mousewheel', handleWheel);
