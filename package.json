@@ -1,7 +1,8 @@
 {
   "name": "gl-mouse",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.2",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "repository": "https://github.com/Necolo/glMouse.git",
   "author": "Necolo Lv.C",
   "license": "MIT",
