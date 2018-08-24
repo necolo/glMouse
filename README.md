@@ -21,7 +21,7 @@ const regl = require('regl')(canvas);
 const mouse = require('gl-mouse')(canvas);
 
 mouse.preset({
-    camera: [0, 0, 8], // preset the camera position
+    camera: [0, 0, 8], // preset the camera position [x, y, z]
 })
 
 const draw = regl({
@@ -40,3 +40,6 @@ regl.frame(() => {
     draw();
 })
 ```
+
+# todos
+- add example to use glMouse in normal webgl program without regl
