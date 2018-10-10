@@ -9,9 +9,9 @@ export class GLMouse {
     public view:mat4 = mat4.create();
     
     private _canvas:HTMLCanvasElement;
-    private radius:number;
-    private lat:number;
-    private lon:number;
+    private _radius:number;
+    private _lat:number;
+    private _lon:number;
 
     constructor (canvas:HTMLCanvasElement, spec:GLMouseSpec = {}) {
         this._canvas = canvas;
@@ -19,9 +19,9 @@ export class GLMouse {
 
         this.eye = spec.eye || vec3.fromValues(0, 0, 1);
         this.calView();
-        this.radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
-        this.lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
-        this.lon = getAngle([1, 0], [this.eye[2], this.eye[1]]);
+        this._radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
+        this._lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
+        this._lon = getAngle([1, 0], [this.eye[2], this.eye[1]]);
 
         this.bindMouseUpEvent();
         this.bindMouseDownEvent();
@@ -29,7 +29,7 @@ export class GLMouse {
     }
 
     public tick = () => {
-        this.eye = getCircleCoord(this.lat, this.lon, this.radius);
+        this.eye = getCircleCoord(this._lat, this._lon, this._radius);
         this.calView();
     }
 
@@ -76,7 +76,7 @@ export class GLMouse {
 
     private _handleMouseWheel = (ev:WheelEvent) => {
         ev.preventDefault();
-        this.radius -= ev.deltaY * 0.001;
+        this._radius -= ev.deltaY * 0.001;
     }
 
     private _lastX:number = 0;
@@ -93,14 +93,14 @@ export class GLMouse {
 
         const dx = screenX - _lastX;
         const dy = screenY - _lastY;
-        let lon = this.lon;
+        let lon = this._lon;
         lon += dy * 0.01;
 
-        this.lat += dx * 0.01;
+        this._lat += dx * 0.01;
         if (lon > 1.57 || lon < -1.57) {
-            this.lon = lon < 0 ? -1.57 : 1.57;
+            this._lon = lon < 0 ? -1.57 : 1.57;
         } else {
-            this.lon = lon;
+            this._lon = lon;
         }
     }
 }
