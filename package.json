@@ -8,5 +8,8 @@
   "license": "MIT",
   "dependencies": {
     "gl-matrix": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/gl-matrix": "^2.4.4"
   }
 }

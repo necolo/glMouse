@@ -1,80 +1,111 @@
-import { mat4, vec3, vec2 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 
-export type Vector3 = [number, number, number];
-
-//todo: add:
-// set_wheelSpeed
-// set_moveSpeed
-export type MouseT = {
-    tick: () => void;
-    model: () => mat4;
-    view: () => mat4;
-    preset:(spec:{
-        camera:Vector3,
-    }) => void;
-    eye:vec3;
+export interface GLMouseSpec {
+    eye?:vec3;
 }
 
-export function glMouse (canvas:HTMLCanvasElement) : MouseT {
-    const { height, width }  = canvas;
+export class GLMouse {
+    public eye:vec3;
+    public view:mat4 = mat4.create();
+    
+    private _canvas:HTMLCanvasElement;
+    private radius:number;
+    private lat:number;
+    private lon:number;
 
-    let rotate:mat4 = mat4.create();
+    constructor (canvas:HTMLCanvasElement, spec:GLMouseSpec = {}) {
+        this._canvas = canvas;
+        const { height, width } = canvas;
 
-    let lastMouseX = 0;
-    let lastMouseY = 0;
+        this.eye = spec.eye || vec3.fromValues(0, 0, 1);
+        this.calView();
+        this.radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
+        this.lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
+        this.lon = getAngle([1, 0], [this.eye[2], this.eye[1]]);
 
-    const res:MouseT = {} as MouseT;
-
-    let radius = 8;
-    let lat = 0;
-    let lon = 0;
-
-    const light_move:number[][] = [];
-    res.preset = (spec) => {
-        const { camera } = spec;
-        const [cx, cy, cz] = camera;
-        radius = getRadius(cx, cy, cz);
-        lat = getAngle([1, 0], [cx, cz]); 
-        lon = getAngle([1, 0], [cz, cy]);
+        this.bindMouseUpEvent();
+        this.bindMouseDownEvent();
+        this.bindMouseWheelEvent();
     }
 
-    const handleWheel = (ev) => {
-        ev.preventDefault();
-        radius -= ev.deltaY * 0.001;
+    public tick = () => {
+        this.eye = getCircleCoord(this.lat, this.lon, this.radius);
+        this.calView();
     }
 
-    const handleDragmove = (ev) => {
-        ev.preventDefault();
-        lat += ev.movementX * 0.01;
-
-        if (lon < 1.57 && lon > -1.57) {
-            lon += ev.movementY * 0.01;
-        } else {
-            lon = (lon > 0) ? 1.56 : -1.56;
-        }
-    }
-
-    res.tick = () => {
-        res.eye = getCircleCoor(lat, lon, radius);
-
-        const view = mat4.lookAt(
-            mat4.create(),
-            res.eye, 
+    private calView () {
+        mat4.lookAt(
+            this.view,
+            this.eye,
             [0, 0, 0],
             [0, 1, 0],
         );
-
-        res.view = () => view;
     }
 
-    canvas.addEventListener('mousewheel', handleWheel);
-    canvas.addEventListener('mousedown', (ev) => canvas.addEventListener('mousemove', handleDragmove));
-    canvas.addEventListener('mouseup', (ev) => canvas.removeEventListener('mousemove', handleDragmove));
+    public bindMouseUpEvent = () => {
+        this._canvas.addEventListener('mouseup', this._handleMouseUp);
+    }
 
-    return res;
+    public bindMouseDownEvent = () => {
+        this._canvas.addEventListener('mousedown', this._handleMouseDown);
+    }
+
+    public bindMouseWheelEvent = () => {
+        this._canvas.addEventListener('mousewheel', this._handleMouseWheel);
+    }
+
+    public removeMouseUpEvent = () => {
+        this._canvas.removeEventListener('mouseup', this._handleMouseUp);
+    }
+
+    public removeMouseDownEvent = () => {
+        this._canvas.removeEventListener('mousedown', this._handleMouseDown);
+    }
+
+    public removeMouseWheelEvent = () => {
+        this._canvas.removeEventListener('mousewheel', this._handleMouseWheel);
+    }
+
+    private _handleMouseUp = () => {
+        this._canvas.removeEventListener('mousemove', this._handleDragMove);
+    }
+
+    private _handleMouseDown = () => {
+        this._canvas.addEventListener('mousemove', this._handleDragMove);
+    }
+
+    private _handleMouseWheel = (ev:WheelEvent) => {
+        ev.preventDefault();
+        this.radius -= ev.deltaY * 0.001;
+    }
+
+    private _lastX:number = 0;
+    private _lastY:number = 0;
+    private _handleDragMove = (ev:MouseEvent) => {
+        ev.preventDefault();
+
+        const { _lastX, _lastY } = this;
+        const { screenX, screenY } = ev;
+        this._lastX = screenX;
+        this._lastY = screenY;
+
+        if (!ev.buttons) { return; }
+
+        const dx = screenX - _lastX;
+        const dy = screenY - _lastY;
+        let lon = this.lon;
+        lon += dy * 0.01;
+
+        this.lat += dx * 0.01;
+        if (lon > 1.57 || lon < -1.57) {
+            this.lon = lon < 0 ? -1.57 : 1.57;
+        } else {
+            this.lon = lon;
+        }
+    }
 }
 
-function toFixed (n:Vector3, f:number = 2) {
+function toFixed (n:vec3, f:number = 2) {
     return [
         parseInt(n[0].toFixed(f)),
         parseInt(n[1].toFixed(f)),
@@ -94,12 +125,12 @@ function getRadius (x, y, z = 0) {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 }
 
-function getCircleCoor (lat, lon, r) : [number, number, number]{
-    return [
+function getCircleCoord (lat, lon, r) : vec3{
+    return vec3.fromValues(
         r * Math.cos(lat) * Math.cos(lon),
         r * Math.sin(lon),
         r * Math.sin(lat) * Math.cos(lon),
-    ]
+    );
 }
 
 function getAngle (a:[number, number], b:[number, number]) {
