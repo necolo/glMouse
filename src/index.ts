@@ -18,7 +18,7 @@ export class GLMouse {
         const { height, width } = canvas;
 
         this.eye = spec.eye || vec3.fromValues(0, 0, 1);
-        this.calView();
+        this._calView();
         this._radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
         this._lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
         this._lon = getAngle([1, 0], [this.eye[2], this.eye[1]]);
@@ -30,10 +30,10 @@ export class GLMouse {
 
     public tick = () => {
         this.eye = getCircleCoord(this._lat, this._lon, this._radius);
-        this.calView();
+        this._calView();
     }
 
-    private calView () {
+    private _calView () {
         mat4.lookAt(
             this.view,
             this.eye,
