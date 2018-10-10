@@ -8,7 +8,19 @@ Add a mouse control in your webgl:
 npm install gl-mouse
 ```
 
-# Usage
+# usage
+```js
+const GLMouse = require('gl-mouse').GLMouse;
+const mouse = new GLMouse(canvas);
+```
+
+or in ts:
+```js
+import { GLMouse } from 'gl-mouse';
+const mouse = new GLMouse(canvas);
+```
+
+# example
 
 It is very simple to use with [regl](http://regl.party)
 ```js
@@ -18,15 +30,13 @@ document.body.appendChild(canvas);
 const regl = require('regl')(canvas);
 
 // create glMouse entity
-const mouse = require('gl-mouse')(canvas);
-
-mouse.preset({
-    camera: [0, 0, 8], // preset the camera position
+const mouse = new GLMouse(canvas, {
+    eye: [0, 0, 8],
 })
 
 const draw = regl({
     uniforms: {
-        view: () => mouse.view(); // set the view matrix to mouse.view()
+        view: () => mouse.view; // set the view matrix
     }
 })
 

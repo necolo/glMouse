@@ -1,7 +1,9 @@
 import { mat4, vec3 } from 'gl-matrix';
 
+export type VEC3 = number[];
+
 export interface GLMouseSpec {
-    eye?:vec3;
+    eye?:vec3|VEC3;
 }
 
 export class GLMouse {
@@ -17,7 +19,7 @@ export class GLMouse {
         this._canvas = canvas;
         const { height, width } = canvas;
 
-        this.eye = spec.eye || vec3.fromValues(0, 0, 1);
+        this.eye = spec.eye && vec3.copy(vec3.create(), spec.eye) || vec3.fromValues(0, 0, 1);
         this._calView();
         this._radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
         this._lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
