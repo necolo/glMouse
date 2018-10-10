@@ -1,3 +1,4 @@
+/*
 import { mat4, vec3, vec2 } from 'gl-matrix';
 
 export type Vector3 = [number, number, number];
@@ -105,3 +106,4 @@ function getCircleCoor (lat, lon, r) : [number, number, number]{
 function getAngle (a:[number, number], b:[number, number]) {
     return Math.atan2(b[1], b[0]) - Math.atan2(a[1], a[0]);
 }
+*/
