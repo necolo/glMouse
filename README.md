@@ -30,15 +30,8 @@ document.body.appendChild(canvas);
 const regl = require('regl')(canvas);
 
 // create glMouse entity
-<<<<<<< HEAD
 const mouse = new GLMouse(canvas, {
     eye: [0, 0, 8],
-=======
-const mouse = require('gl-mouse')(canvas);
-
-mouse.preset({
-    camera: [0, 0, 8], // preset the camera position [x, y, z]
->>>>>>> b7ffc15484434ecca5b89e1f952eb1a2fd265e4a
 })
 
 const draw = regl({
