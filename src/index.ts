@@ -68,12 +68,16 @@ export class GLMouse {
         this._canvas.removeEventListener('mousewheel', this._handleMouseWheel);
     }
 
+    public removeMouseMoveEvent = () => {
+        this._canvas.removeEventListener('mousemove', this._handleMouseMove);
+    }
+
     private _handleMouseUp = () => {
-        this._canvas.removeEventListener('mousemove', this._handleDragMove);
+        this._canvas.addEventListener('mousemove', this._handleMouseMove);
     }
 
     private _handleMouseDown = () => {
-        this._canvas.addEventListener('mousemove', this._handleDragMove);
+        this._canvas.addEventListener('mousemove', this._handleMouseMove);
     }
 
     private _handleMouseWheel = (ev:WheelEvent) => {
@@ -83,9 +87,7 @@ export class GLMouse {
 
     private _lastX:number = 0;
     private _lastY:number = 0;
-    private _handleDragMove = (ev:MouseEvent) => {
-        ev.preventDefault();
-
+    private _handleMouseMove = (ev:MouseEvent) => {
         const { _lastX, _lastY } = this;
         const { screenX, screenY } = ev;
         this._lastX = screenX;
@@ -93,6 +95,7 @@ export class GLMouse {
 
         if (!ev.buttons) { return; }
 
+        ev.preventDefault();
         const dx = screenX - _lastX;
         const dy = screenY - _lastY;
         let lon = this._lon;
