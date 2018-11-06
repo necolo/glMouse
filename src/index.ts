@@ -4,10 +4,12 @@ export type VEC3 = number[];
 
 export interface GLMouseSpec {
     eye?:vec3|VEC3;
+    wheelSpeed?:number;
 }
 
 export class GLMouse {
     public eye:vec3;
+    public wheelSpeed:number;
     public view:mat4 = mat4.create();
     
     private _canvas:HTMLCanvasElement;
@@ -20,6 +22,7 @@ export class GLMouse {
         const { height, width } = canvas;
 
         this.eye = spec.eye && vec3.copy(vec3.create(), spec.eye) || vec3.fromValues(0, 0, 1);
+        this.wheelSpeed = spec.wheelSpeed || 0.01;
         this._calView();
         this._radius = getRadius(this.eye[0], this.eye[1], this.eye[2]) || 8;
         this._lat = getAngle([1, 0], [this.eye[0], this.eye[2]]);
@@ -82,7 +85,7 @@ export class GLMouse {
 
     private _handleMouseWheel = (ev:WheelEvent) => {
         ev.preventDefault();
-        this._radius -= ev.deltaY * 0.001;
+        this._radius -= ev.deltaY * this.wheelSpeed;
     }
 
     private _lastX:number = 0;

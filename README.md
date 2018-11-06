@@ -30,8 +30,10 @@ document.body.appendChild(canvas);
 const regl = require('regl')(canvas);
 
 // create glMouse entity
+// all specs are optional, and here shows the default value
 const mouse = new GLMouse(canvas, {
     eye: [0, 0, 8],
+    wheelSpeed: 0.01,
 })
 
 const draw = regl({
