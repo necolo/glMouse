@@ -83,7 +83,7 @@ export class GLMouse {
         this._canvas.addEventListener('mousemove', this._handleMouseMove);
     }
 
-    private _handleMouseWheel = (ev:WheelEvent) => {
+    private _handleMouseWheel = (ev:any) => {
         ev.preventDefault();
         this._radius -= ev.deltaY * this.wheelSpeed;
     }
