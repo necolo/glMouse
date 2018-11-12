@@ -85,7 +85,7 @@ export class GLMouse {
 
     private _handleMouseWheel = (ev:any) => {
         ev.preventDefault();
-        this._radius -= ev.deltaY * this.wheelSpeed;
+        this._radius -= ev.deltaY * this.wheelSpeed * Math.max(1, this._radius / 100);
     }
 
     private _lastX:number = 0;
