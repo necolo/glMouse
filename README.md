@@ -14,8 +14,8 @@ const GLMouse = require('gl-mouse').GLMouse;
 const mouse = new GLMouse(canvas);
 ```
 
-or in ts:
-```js
+or in TypeScript:
+```ts
 import { GLMouse } from 'gl-mouse';
 const mouse = new GLMouse(canvas);
 ```
